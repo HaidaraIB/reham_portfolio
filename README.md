@@ -63,10 +63,6 @@ Cloudflare's Free plan currently allows 500 builds/month: https://developers.clo
 Supabase's Free plan is suitable for this small content store, but free projects pause after one week of inactivity: https://supabase.com/pricing
 Review these limits before choosing a long-term plan. Static hosting stays independent of Supabase, but configured live content requires an available database.
 
-## GitHub Pages
-
-`.github/workflows/deploy.yml` builds and deploys every push to `main`, serving the site from `/reham_portfolio/` (update the `--base` value if the repository is renamed). Pages requires a public repository on GitHub's Free plan. In Settings > Pages, set Source to GitHub Actions. For Supabase, add `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` as repository Actions secrets.
-
 ## Validate
 
 ```sh
