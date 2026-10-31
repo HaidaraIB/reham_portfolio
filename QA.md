@@ -1,5 +1,9 @@
 # Verification
 
+## GitHub Pages subpath (2026-10-31)
+
+- All twelve Playwright tests passed in a full serial run. A production build with `--base=/reham_portfolio/`, served from a local stand-in for Pages with the `404.html` fallback, loaded home, opened `/admin` directly, and linked back home with no failed assets. The tablet layout test timed out twice while a stray preview server was running, then passed three of three on this code and on the previous commit. The workflow itself has not run on GitHub yet. On Git Bash, set `MSYS_NO_PATHCONV=1` when passing `--base`, or the path is rewritten and the page is blank.
+
 ## Fraunces, plain nav link, icon toggle, reversible theme wipe (2026-10-31)
 
 - Vite build passed and all twelve Playwright tests passed on two consecutive full serial runs, including new coverage that going dark shrinks the old page into the toggle and going light grows the new page out of it. The filled wipe animation has to be cancelled when each transition ends, or it clips the next transition's snapshot. Frames frozen mid-wipe were reviewed in both directions. The hero and footer names fit at the eight sizes measured from 320 to 2560 wide. Hero name sizing is now column width / 3.05, capped at 445px, for Fraunces.

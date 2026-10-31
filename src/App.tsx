@@ -36,7 +36,7 @@ function Portfolio({ content }: { content: Content }) {
   const categories = ['All work', ...new Set(content.projects.map(p => p.category))];
   const projects = content.projects.filter(p => filter === 'All work' || p.category === filter);
   return <><a className="skip-link" href="#main">Skip to content</a>
-    <header className="site-header"><div className="header-bar wrap"><a className="wordmark" href="/" aria-label={`${content.name} home`}>{content.name.toLowerCase()}<span>.</span></a><nav aria-label="Main navigation"><a href="#work">Work</a><a href="#about">About</a><a href="#contact">Let's talk</a><ThemeToggle/></nav></div><div className="scroll-progress" aria-hidden="true"/></header>
+    <header className="site-header"><div className="header-bar wrap"><a className="wordmark" href={import.meta.env.BASE_URL} aria-label={`${content.name} home`}>{content.name.toLowerCase()}<span>.</span></a><nav aria-label="Main navigation"><a href="#work">Work</a><a href="#about">About</a><a href="#contact">Let's talk</a><ThemeToggle/></nav></div><div className="scroll-progress" aria-hidden="true"/></header>
     <main id="main"><Hero content={content}/>
       <section id="work" className="work-section" aria-labelledby="work-heading"><div className="wrap">
         <div className="section-heading"><h2 id="work-heading"><Line>Selected work</Line><span className="count">({content.projects.length})</span></h2><p className="reveal">A few ideas, brought to life.</p></div>
@@ -74,5 +74,5 @@ export default function App() {
   }, []);
   if (loading) return <main className="loading" role="status">Loading portfolio…</main>;
   if (error) return <main className="loading" role="alert">{error}<button onClick={() => location.reload()}>Try again</button></main>;
-  return location.pathname.replace(/\/$/, '') === '/admin' ? <Admin content={content} onSave={setContent}/> : <Portfolio content={content}/>;
+  return location.pathname.replace(/\/$/, '') === `${import.meta.env.BASE_URL}admin` ? <Admin content={content} onSave={setContent}/> : <Portfolio content={content}/>;
 }
