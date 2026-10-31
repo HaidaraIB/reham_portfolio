@@ -1,5 +1,9 @@
 # Verification
 
+## Loader, confirm dialog and toasts (2026-10-31)
+
+- Build passed and all 13 Playwright tests passed in a serial run, including new coverage that the editor raises no native dialog: confirm by Cancel focus, Escape and backdrop, delete, export and validation toasts, and leaving with unsaved changes. Sign out is not in that suite because it only renders with Supabase configured, so it was checked in a separate scripted run against a mocked Supabase, with no live project: confirm when clean, the destructive variant when dirty, cancel, the busy state, publish, and the signed-out toast. No native dialogs or page errors. Reviewed in screenshots: dialog and toasts in both themes, 320 wide, button loaders, loading screen in both themes and reduced motion. Sign out overlapped the Projects tab at 320, so it now has its own row on mobile. Browsers show their own prompt on reload or tab close with unsaved changes; that can't be replaced.
+
 ## GitHub Pages subpath (2026-10-31)
 
 - All twelve Playwright tests passed in a full serial run. A production build with `--base=/reham_portfolio/`, served from a local stand-in for Pages with the `404.html` fallback, loaded home, opened `/admin` directly, and linked back home with no failed assets. The tablet layout test timed out twice while a stray preview server was running, then passed three of three on this code and on the previous commit. The workflow itself has not run on GitHub yet. On Git Bash, set `MSYS_NO_PATHCONV=1` when passing `--base`, or the path is rewritten and the page is blank.

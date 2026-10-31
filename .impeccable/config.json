@@ -1,0 +1,14 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "overused-font",
+        "value": "fraunces",
+        "createdAt": "2026-10-31T03:29:05.357Z",
+        "reason": "DESIGN.md names Fraunces as the project typeface and QA.md records a deliberate switch to it; predates this session"
+      }
+    ]
+  }
+}

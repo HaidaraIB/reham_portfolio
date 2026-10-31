@@ -17,7 +17,7 @@ test('admin persists profile and project changes', async ({ page }) => {
   await page.goto('/admin');
   await page.getByLabel('Your name').fill('Mira');
   await page.getByRole('button', { name: 'Save changes', exact: true }).click();
-  await expect(page.getByRole('status')).toContainText('Saved in this browser');
+  await expect(page.locator('.toast').last()).toContainText('Saved in this browser');
   await page.reload();
   await expect(page.getByLabel('Your name')).toHaveValue('Mira');
   await page.getByRole('button', { name: 'Projects' }).click();
@@ -25,13 +25,57 @@ test('admin persists profile and project changes', async ({ page }) => {
   await page.getByLabel('Project title', { exact: true }).last().fill('New sample');
   await page.getByLabel('Description', { exact: true }).last().fill('A new sample project.');
   await page.getByRole('button', { name: 'Save changes', exact: true }).click();
-  await expect(page.getByRole('status')).toContainText('Saved in this browser');
-  page.on('dialog', dialog => dialog.accept());
+  await expect(page.locator('.toast').last()).toContainText('Saved in this browser');
   await page.getByRole('button', { name: 'Delete New sample', exact: true }).click();
+  await page.getByRole('alertdialog').getByRole('button', { name: 'Delete project' }).click();
   await page.getByRole('button', { name: 'Save changes', exact: true }).click();
+  await expect(page.getByRole('button', { name: 'Save changes', exact: true })).toBeDisabled();
   await page.goto('/');
   await expect(page.getByRole('heading', { level: 1 })).toHaveAccessibleName('Mira');
   await expect(page.locator('.project')).toHaveCount(4);
+});
+
+test('editor feedback uses the app dialog and toasts, never a native prompt', async ({ page }) => {
+  const native: string[] = []; page.on('dialog', dialog => { native.push(dialog.type()); dialog.accept(); });
+  await page.goto('/admin');
+  await page.getByRole('button', { name: 'Projects' }).click();
+  const remove = page.getByRole('button', { name: 'Delete Orbit', exact: true });
+  const dialog = page.getByRole('alertdialog');
+
+  await remove.click();
+  await expect(dialog).toContainText('Delete Orbit?');
+  await expect(dialog.getByRole('button', { name: 'Keep project' })).toBeFocused();
+  await page.keyboard.press('Escape');
+  await expect(dialog).not.toBeVisible();
+  await expect(remove).toBeFocused();
+
+  await remove.click();
+  await page.mouse.click(5, 5);
+  await expect(dialog).not.toBeVisible();
+  await expect(remove).toBeVisible();
+
+  await remove.click();
+  await dialog.getByRole('button', { name: 'Delete project' }).click();
+  await expect(remove).toHaveCount(0);
+  await expect(page.locator('.toast')).toContainText('Orbit removed');
+  await page.getByLabel('Dismiss notification').click();
+  await expect(page.locator('.toast')).toHaveCount(0);
+
+  await page.getByRole('button', { name: 'Export JSON' }).click();
+  await expect(page.locator('.toast')).toContainText('Exported');
+
+  await page.getByRole('button', { name: 'Profile & hero' }).click();
+  await page.getByLabel('Your name').fill('');
+  await page.getByRole('button', { name: 'Save changes', exact: true }).click();
+  await expect(page.getByRole('alert')).toHaveCount(1);
+  await expect(page.getByRole('alert')).toContainText('complete the required fields');
+
+  await page.getByRole('link', { name: /^\./ }).click();
+  await expect(dialog).toContainText('Leave without saving?');
+  await dialog.getByRole('button', { name: 'Discard changes' }).click();
+  await expect(page).toHaveURL('/');
+  await expect(page.locator('.project')).toHaveCount(4);
+  expect(native).toEqual([]);
 });
 
 test('mobile layouts and reduced motion', async ({ page }) => {

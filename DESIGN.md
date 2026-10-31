@@ -8,6 +8,8 @@ Idea: Reham's name becomes the central typographic object, with individual lette
 
 Motion: GSAP ScrollTrigger with Lenis smooth scroll (src/motion.ts). The hero holds while its copy clears and the name rises, then the work section slides over it; project cards stack and recede; the two about lines pass each other and the statement inks in word by word; the contact panel opens from an inset card to full bleed into the blue footer, where the name returns in white in both themes. All of it sits on top of complete CSS, so the page is whole with reduced motion or JavaScript off. Theme: follows the system until a choice is saved (src/theme.ts). Switching to light pours the page out of the toggle; switching to dark plays that backwards, drawing the light back in.
 
+Feedback: the loader is the hero's dot grid in miniature, a ripple leaving the centre of nine dots. Toasts and the confirm dialog sit on the same surface, line and shadow tokens as the rest of the page, and stay inside the blue and gray family; only errors and destructive actions use danger red. Usage rules are in AGENTS.md.
+
 Section argument: hero introduces the person and discipline; selected work demonstrates sample visual directions; about describes the approach; contact provides a direct email action. Admin supports editing these fields and adding/removing projects.
 
 Skill direction: name-as-monument. Deviations: no portrait, project photographs, or video were supplied, so no stock person is presented as Reham. Original concept artwork replaces photographic previews. The user's requested subtle particles replace the dealt shutter motion. The chosen repository design and blue/gray brief govern tokens.

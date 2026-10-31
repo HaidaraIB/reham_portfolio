@@ -35,6 +35,10 @@ import Hero from './components/Hero';
 
 The component needs React and lucide-react. Its type-only `Content` import comes from `src/data.ts`. Include the `.button`, `.primary` styles and `--blue`/`--muted` tokens from `src/styles.css`, and provide a destination with `id="work"`. The canvas is decorative and ignores pointer events. It uses a capped device pixel ratio, bounded particle count, smoothed mouse coordinates, ResizeObserver, and IntersectionObserver. It stops its animation loop when out of view or the tab is hidden. OS reduced-motion changes are observed live; CSS entrance animations also respect reduced motion. A visible pause button stops the canvas. Effects clean up observers, listeners, and frames, including React Strict Mode remounts.
 
+## Loading, confirmations and notifications
+
+Use `useToast` and `useConfirm` from `src/feedback.tsx`, and `Loader` and `LoadingScreen` from `src/components/Loader.tsx`. Don't use native browser dialogs. `AGENTS.md` has examples and the rules for when to use each.
+
 ## Secure shared editing with Supabase
 
 1. Create a Supabase project and run `supabase/schema.sql` in the SQL editor once.

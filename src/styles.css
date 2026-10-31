@@ -140,6 +140,39 @@ body:has(dialog[open]){overflow:hidden}
 @keyframes dialog-in{from{opacity:0;transform:translateY(32px) scale(.97)}to{opacity:1;transform:none}}
 @keyframes fade-in{from{opacity:0}to{opacity:1}}
 .loading{min-height:100vh;display:flex;align-items:center;justify-content:center;gap:20px}
+
+/* Feedback: Loader, toasts and the confirm dialog. Use the components in src/components/Loader.tsx and src/feedback.tsx. */
+.loader{display:inline-grid;grid-template-columns:repeat(3,1fr);gap:calc(var(--loader-size) * .14);flex:none;width:var(--loader-size);height:var(--loader-size)}
+.loader i{border-radius:50%;background:currentColor;animation:loader-ripple 1.3s ease-in-out infinite}
+.loader i:nth-child(even){animation-delay:.13s}
+.loader i:nth-child(odd){animation-delay:.26s}
+.loader i:nth-child(5){animation-delay:0s}
+@keyframes loader-ripple{0%,60%,100%{opacity:.45;transform:scale(.6)}25%{opacity:1;transform:scale(1)}}
+.button:has(.loader){gap:10px}
+.loading-screen{flex-direction:column;animation:fade-in .4s ease .15s both}
+.loading-screen .loader{color:var(--accent-text)}
+.loading-screen p{margin:0;font-size:14px;color:var(--muted)}
+.toasts{position:fixed;right:24px;bottom:24px;z-index:30;display:grid;gap:10px;width:min(380px,calc(100vw - 32px));margin:0;padding:0;list-style:none;pointer-events:none}
+.toast{display:flex;align-items:flex-start;gap:12px;padding:12px 8px 12px 14px;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:var(--radius);box-shadow:0 12px 36px var(--shadow);pointer-events:auto;animation:toast-in .45s var(--ease)}
+.toast.is-leaving{animation:toast-out .2s ease forwards}
+.toast p{flex:1;min-width:0;margin:3px 0 0;font-size:14px;line-height:1.45;overflow-wrap:anywhere}
+.toast-icon{display:grid;place-items:center;flex:none;width:28px;height:28px;border-radius:50%;background:color-mix(in srgb,var(--accent-text) 14%,var(--surface));color:var(--accent-text)}
+.toast-error .toast-icon{background:var(--danger-soft);color:var(--danger)}
+.toast button{position:relative;display:grid;place-items:center;flex:none;width:28px;height:28px;padding:0;border:0;border-radius:6px;background:none;color:var(--muted);cursor:pointer}
+.toast button:hover{background:var(--soft);color:var(--ink)}
+.toast button:after{content:'';position:absolute;inset:-8px}
+@keyframes toast-in{from{opacity:0;transform:translateY(16px) scale(.97)}to{opacity:1;transform:none}}
+@keyframes toast-out{to{opacity:0;transform:translateY(8px)}}
+.confirm-dialog{border:0;padding:0;width:min(440px,calc(100vw - 32px));border-radius:16px;background:var(--surface);color:var(--ink)}
+.confirm-dialog[open]{animation:dialog-in .45s var(--ease)}
+.confirm-dialog::backdrop{background:#17203399;backdrop-filter:blur(8px);animation:fade-in .25s ease}
+.confirm-body{padding:28px}
+.confirm-body h2{margin:0;font-size:26px;font-weight:500;letter-spacing:-.025em;line-height:1.15}
+.confirm-body p{margin:12px 0 0;font-size:15px;color:var(--muted)}
+.confirm-actions{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:10px;margin-top:26px}
+.confirm-actions .button{min-height:46px;padding:12px 20px}
+.danger{background:var(--danger);color:var(--surface)}
+.danger:hover{background:color-mix(in srgb,var(--danger) 86%,var(--ink));color:var(--surface)}
 .admin-status{display:flex;align-items:center;gap:30px}
 .admin-status .theme-toggle{margin:0}
 
@@ -154,6 +187,6 @@ body:has(dialog[open]){overflow:hidden}
 @media(max-width:1000px){.wrap{width:calc(100% - 64px)}.service{grid-template-columns:44px minmax(0,1fr);gap:8px 20px}.service p{grid-column:2}.admin-shell{grid-template-columns:195px 1fr}.admin-sidebar{padding:30px 18px}.admin-body{padding:30px}.admin-header{padding:0 30px}.editor-title{align-items:flex-start}.editor-title h1{font-size:30px}.editor-title .button{font-size:0;gap:0}.editor-title .button svg{width:18px}.form-window{width:100%;padding:20px}.about-grid{gap:36px}}
 @media(max-width:850px),(max-height:599px){.project{position:static;will-change:auto}.project-card{height:auto}}
 @media(max-width:850px){.project-card{grid-template-columns:1fr}.project-open{order:-1;height:auto;aspect-ratio:1.25}.project-meta{padding:12px 12px 14px}.project-index{margin-bottom:8px}.about-grid{grid-template-columns:1fr}.about-aside{position:static;order:2}.about-tag{display:none}}
-@media(max-width:650px){:root{--header:72px}.wrap{width:calc(100% - 40px)}.is-scrolled .header-bar{height:60px}.wordmark{font-size:25px}.site-header nav{gap:16px;font-size:13px}.work-section{border-radius:22px 22px 0 0}.section-heading{display:block}.section-heading p{margin:16px 0 0}.work-tools{margin:24px 0 28px}.filters{gap:0}.filters button{padding:9px 11px;font-size:13px;min-height:44px}.project{margin-bottom:18px}.project-arrow{width:44px;height:44px;bottom:12px;right:12px}.about-title{font-size:15vw}.service{padding:24px 0}.contact-row{display:block;position:relative}.contact-row h2{margin-bottom:30px}.contact-circle{width:64px;margin-bottom:28px}.email-link{font-size:16px}.footer-bar>span{display:none}.admin-shell{display:block}.admin-sidebar{position:static;height:auto;padding:20px;gap:12px}.admin-sidebar .studio-label{display:none}.admin-sidebar nav{display:flex;margin:0}.admin-sidebar>a:not(.wordmark){position:absolute;right:20px;top:29px}.admin-sidebar nav button{padding:12px}.admin-sidebar .signout{position:absolute;right:20px;top:64px}.admin-header{height:60px;padding:0 20px}.admin-body{padding:30px 20px}.editor-title h1{font-size:29px}.demo-banner{display:block;font-size:12px}.demo-banner b{display:block;margin-bottom:5px}.editor-panel{padding:21px}.field-grid{grid-template-columns:1fr}.panel-heading{display:block}.panel-heading p{margin-top:8px}.project-editor .panel-heading{display:flex}.editor-actions{align-items:flex-start;flex-direction:column}.editor-actions .button{width:100%}.dialog-copy{padding:23px}.project-dialog .project-art{aspect-ratio:1.15;padding:10%}.mock-columns b{font-size:9px}}
+@media(max-width:650px){:root{--header:72px}.wrap{width:calc(100% - 40px)}.is-scrolled .header-bar{height:60px}.wordmark{font-size:25px}.site-header nav{gap:16px;font-size:13px}.work-section{border-radius:22px 22px 0 0}.section-heading{display:block}.section-heading p{margin:16px 0 0}.work-tools{margin:24px 0 28px}.filters{gap:0}.filters button{padding:9px 11px;font-size:13px;min-height:44px}.project{margin-bottom:18px}.project-arrow{width:44px;height:44px;bottom:12px;right:12px}.about-title{font-size:15vw}.service{padding:24px 0}.contact-row{display:block;position:relative}.contact-row h2{margin-bottom:30px}.contact-circle{width:64px;margin-bottom:28px}.email-link{font-size:16px}.footer-bar>span{display:none}.admin-shell{display:block}.admin-sidebar{position:static;height:auto;padding:20px;gap:12px}.admin-sidebar .studio-label{display:none}.admin-sidebar nav{display:flex;margin:0}.admin-sidebar>a:not(.wordmark){position:absolute;right:20px;top:29px}.admin-sidebar nav button{padding:12px}.admin-sidebar .signout{align-self:flex-start;min-height:44px;padding:0}.admin-header{height:60px;padding:0 20px}.admin-body{padding:30px 20px}.editor-title h1{font-size:29px}.demo-banner{display:block;font-size:12px}.demo-banner b{display:block;margin-bottom:5px}.editor-panel{padding:21px}.field-grid{grid-template-columns:1fr}.panel-heading{display:block}.panel-heading p{margin-top:8px}.project-editor .panel-heading{display:flex}.editor-actions{align-items:flex-start;flex-direction:column}.editor-actions .button{width:100%}.dialog-copy{padding:23px}.project-dialog .project-art{aspect-ratio:1.15;padding:10%}.mock-columns b{font-size:9px}.toasts{right:16px;bottom:16px}.confirm-body{padding:23px}.confirm-actions .button{flex:1}}
 @media(max-width:379px){.site-header nav{gap:12px}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*:before,*:after{animation:none!important;transition:none!important}}

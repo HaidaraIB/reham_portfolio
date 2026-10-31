@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { ArrowUpRight, ArrowRight, X, Plus } from 'lucide-react';
 import Hero, { nameStyle } from './components/Hero';
+import { LoadingScreen } from './components/Loader';
 import ThemeToggle from './components/ThemeToggle';
 import { initialContent, isContent, safeUrl, STORAGE_KEY } from './data';
 import type { Content, Project } from './data';
@@ -72,7 +73,7 @@ export default function App() {
     } else { try { const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null'); if (isContent(saved)) setContent(saved); } catch { /* Storage may be unavailable; the default portfolio remains usable. */ } setLoading(false); }
     return () => { active = false; };
   }, []);
-  if (loading) return <main className="loading" role="status">Loading portfolio…</main>;
+  if (loading) return <LoadingScreen label="Loading portfolio…"/>;
   if (error) return <main className="loading" role="alert">{error}<button onClick={() => location.reload()}>Try again</button></main>;
   return location.pathname.replace(/\/$/, '') === `${import.meta.env.BASE_URL}admin` ? <Admin content={content} onSave={setContent}/> : <Portfolio content={content}/>;
 }
