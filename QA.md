@@ -1,5 +1,20 @@
 # Verification
 
+## Editor header on phones (2026-10-31)
+
+- TypeScript check and Vite build passed. All 17 Playwright tests passed in Microsoft Edge with `--workers=1` and `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` set empty. With `.env.local` loaded, 5 fail because the app runs in Supabase mode (sign-in gate, live project count); the suite expects local mode.
+- Signed-in layout checked on a temporary dev server with a fake Supabase config and session: 390 wide in light and dark, 320 wide in dark, the 12-character name limit (the wordmark truncates) and the "Signing out…" state. Overflow is 0 and the tabs, View portfolio and Sign out are all at least 44px tall.
+- Real sign-out against Supabase and physical phones have not been tested.
+
+## Throwable letters, phone motion, wipe origin (2026-10-31)
+
+- Vite build passed and all 17 Playwright tests passed on three consecutive full serial runs, with the Supabase variables blanked. One earlier repeat run hit a single 30-second page load timeout that did not recur.
+- New coverage: letters drop, throw and return home; Motion off sends them home and disables play; on an emulated phone a tap pops a letter, scrolling lifts the word, and service rows light up; the wipe is centred on the toggle at phone size. A real touch drag was reviewed in screenshots at 393x780: drop, settled, thrown and scroll lift in dark, a frozen mid-wipe frame, and a throw at 1440 in light.
+- The intermittent scroll test failure noted in earlier passes was a test race: it scrolled while Lenis was still animating to the About anchor, so the page was dragged back. It now waits for the scroll to settle.
+- `.env.local` points the dev server at the live Supabase project, which fails six tests on unmodified code too (live content has 2 projects, `/admin` shows sign-in). Run the suite with `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` set to empty in the shell.
+- Hero frame time at 1920x1080 measured 33ms median on both old and new code in the same session, so the letters add no measurable cost, but this is above the 16.6ms recorded earlier; the machine was slower that day or the earlier measure differed.
+- Not verified on a real phone. Emulation has no URL bar, so the wipe bug itself was not reproduced; the cause is reasoned from how view transition layers are sized, and the emulator only confirms the new measurement matches the button. Device feel of throws, and iOS Safari, are also untested.
+
 ## Loader, confirm dialog and toasts (2026-10-31)
 
 - Build passed and all 13 Playwright tests passed in a serial run, including new coverage that the editor raises no native dialog: confirm by Cancel focus, Escape and backdrop, delete, export and validation toasts, and leaving with unsaved changes. Sign out is not in that suite because it only renders with Supabase configured, so it was checked in a separate scripted run against a mocked Supabase, with no live project: confirm when clean, the destructive variant when dirty, cancel, the busy state, publish, and the signed-out toast. No native dialogs or page errors. Reviewed in screenshots: dialog and toasts in both themes, 320 wide, button loaders, loading screen in both themes and reduced motion. Sign out overlapped the Projects tab at 320, so it now has its own row on mobile. Browsers show their own prompt on reload or tab close with unsaved changes; that can't be replaced.

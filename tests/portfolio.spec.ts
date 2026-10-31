@@ -129,6 +129,7 @@ test('scroll drives the page and stays usable', async ({ page }) => {
   expect(await opacity()).toBeLessThan(.5);
   await page.getByRole('link', { name: 'About', exact: true }).click();
   await expect(page.locator('.site-header a[href="#about"]')).toHaveClass(/is-active/, { timeout: 5000 });
+  await expect.poll(async () => { const y = await page.evaluate(() => scrollY); await page.waitForTimeout(150); return y === await page.evaluate(() => scrollY); }, { timeout: 8000 }).toBeTruthy(); // Lenis would drag the scroll below back to the anchor.
   const end = await page.evaluate(() => document.documentElement.scrollHeight);
   for (let y = 0; y <= end; y += 400) { await page.evaluate(v => scrollTo(0, v), y); await page.waitForTimeout(30); }
   await page.waitForTimeout(800);
@@ -175,6 +176,72 @@ test('light pours out of the toggle and is drawn back in', async ({ page }) => {
   const light = await wipe('Switch to light theme');
   expect(light.pseudo).toBe('::view-transition-new(root)');
   expect(light.from).toContain('circle(0px');
+});
+
+test('the wipe is centred on the toggle at phone size', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.emulateMedia({ colorScheme: 'light' });
+  await page.goto('/'); await page.waitForTimeout(400);
+  const toggle = page.locator('.theme-toggle'), box = (await toggle.boundingBox())!;
+  await toggle.click();
+  await expect.poll(() => page.evaluate(`document.getAnimations().filter(a => a.effect.getKeyframes().some(f => 'clipPath' in f)).length`)).toBeGreaterThan(0);
+  const clip = await page.evaluate(() => String((document.getAnimations().map(a => a.effect as KeyframeEffect).find(e => e.getKeyframes().some(frame => 'clipPath' in frame))!).getKeyframes()[1].clipPath));
+  const [, x, y] = clip.match(/at ([\d.]+)px ([\d.]+)px/)!.map(Number);
+  expect(x).toBeCloseTo(box.x + box.width / 2, 0);
+  expect(y).toBeCloseTo(box.y + box.height / 2, 0);
+  await page.waitForTimeout(900);
+  expect(await toggle.evaluate(el => el.style.getPropertyValue('view-transition-name'))).toBe('');
+});
+
+test('letters drop in, can be thrown, and return home', async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await page.addInitScript(() => { const w = window as unknown as { peak: number }; w.peak = 0; const read = () => { const el = document.querySelector('.hero-letter:last-child'); if (el) w.peak = Math.max(w.peak, Math.abs(new DOMMatrix(getComputedStyle(el).transform).m42)); requestAnimationFrame(read); }; requestAnimationFrame(read); });
+  await page.goto('/');
+  const offset = (index: number) => page.locator('.hero-letter').nth(index).evaluate(el => Math.hypot(new DOMMatrix(getComputedStyle(el).transform).m41, new DOMMatrix(getComputedStyle(el).transform).m42));
+  await expect.poll(() => offset(5), { timeout: 8000 }).toBeLessThan(2);
+  expect(await page.evaluate(() => (window as unknown as { peak: number }).peak)).toBeGreaterThan(100);
+  await expect(page.locator('.hero-hint')).not.toHaveClass(/is-gone/);
+  const box = (await page.locator('.hero-letter').first().boundingBox())!;
+  await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+  await page.mouse.down();
+  await page.mouse.move(640, 300, { steps: 6 });
+  await page.waitForTimeout(150);
+  await page.mouse.up();
+  await expect(page.locator('.hero-hint')).toHaveClass(/is-gone/);
+  await page.waitForTimeout(150);
+  expect(await offset(0)).toBeGreaterThan(100);
+  await expect.poll(() => offset(0), { timeout: 12000 }).toBeLessThan(2);
+});
+
+test('motion off sends the letters home and turns play off', async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await page.goto('/');
+  await page.getByRole('button', { name: 'Pause background animation' }).click();
+  await page.waitForTimeout(300);
+  const moved = await page.locator('.hero-letter').evaluateAll(all => all.map(el => new DOMMatrix(getComputedStyle(el).transform).m42));
+  expect(moved.every(y => y === 0)).toBeTruthy();
+  await expect(page.locator('.hero-letter').first()).toHaveCSS('pointer-events', 'none');
+});
+
+test.describe('on a phone', () => {
+  test.use({ hasTouch: true, isMobile: true, viewport: { width: 390, height: 844 } });
+
+  test('a tap pops a letter, and scrolling lifts the word and lights the services', async ({ page }) => {
+    const errors: string[] = []; page.on('pageerror', error => errors.push(error.message));
+    await page.goto('/');
+    await expect.poll(() => page.locator('.hero-letter').last().evaluate(el => Math.abs(new DOMMatrix(getComputedStyle(el).transform).m42)), { timeout: 10000 }).toBeLessThan(2);
+    await page.waitForTimeout(500);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBeTruthy();
+    const box = (await page.locator('.hero-letter').nth(2).boundingBox())!;
+    await page.touchscreen.tap(box.x + box.width / 2, box.y + box.height / 2);
+    await expect.poll(() => page.locator('.hero-letter').nth(2).evaluate(el => new DOMMatrix(getComputedStyle(el).transform).m42)).toBeLessThan(-30);
+    await expect(page.locator('.hero-hint')).toHaveClass(/is-gone/);
+    await page.evaluate(() => scrollTo(0, innerHeight * .6));
+    await expect(page.locator('.hero-name')).toHaveClass(/is-riding/);
+    await page.evaluate(() => document.querySelector('.services')!.scrollIntoView({ block: 'center' }));
+    await expect(page.locator('.service.is-lit')).not.toHaveCount(0);
+    expect(errors).toEqual([]);
+  });
 });
 
 test('footer name stays white in both themes', async ({ page }) => {
