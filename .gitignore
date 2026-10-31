@@ -1,0 +1,38 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+*.tsbuildinfo
+vite.config.ts.timestamp-*
+
+# Environment files (secrets); the empty template stays in the repo
+.env
+.env.*
+!.env.example
+
+# Test output
+test-results/
+playwright-report/
+blob-report/
+playwright/.cache/
+
+# Logs
+*.log
+
+# Local deploy and Supabase CLI state
+.wrangler/
+.vercel/
+supabase/.temp/
+supabase/.branches/
+
+# Local design tooling
+.taste-skill/
+
+# Editors and operating systems
+.idea/
+.vscode/*
+!.vscode/extensions.json
+Thumbs.db
+Desktop.ini
+.DS_Store

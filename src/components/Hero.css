@@ -1,0 +1,23 @@
+/* The stage is taller than the hero: the hero holds while its copy clears (first 40svh),
+   then the work section, pulled up by one viewport, slides over it. */
+.hero-stage{position:relative;z-index:1}
+.hero{position:relative;isolation:isolate;overflow:hidden;min-height:100svh;display:flex;background:radial-gradient(90% 70% at 78% 8%,color-mix(in srgb,var(--blue) 9%,transparent),transparent 70%)}
+[data-theme=dark] .hero{background:radial-gradient(90% 70% at 78% 8%,color-mix(in srgb,var(--blue) 26%,transparent),transparent 70%)}
+.particle-canvas{position:absolute;inset:0;width:100%;height:100%;z-index:-1;pointer-events:none}
+.hero-inner{display:flex;flex-direction:column;padding-top:calc(var(--header) + 28px);padding-bottom:clamp(20px,3vh,36px)}
+.hero-top{display:flex;justify-content:space-between;align-items:center;gap:24px}
+.hero-top p,.hero-note{font-size:15px;color:var(--muted);margin:0}
+.hero-note{margin-left:auto}
+.hero-bottom{display:flex;align-items:flex-end;justify-content:space-between;gap:40px;margin-top:clamp(28px,6vh,72px)}
+.hero-bottom h2{font-size:clamp(32px,4.2vw,64px);letter-spacing:-.032em;line-height:1.05;font-weight:500;margin:0 0 18px}
+.hero-intro{max-width:510px;color:var(--muted);font-size:17px;line-height:1.7;margin:0}
+.hero-name{flex:none;margin:auto 0 0;padding:.04em 0 .05em;font-size:clamp(84px,min(calc((100vw - 112px) / 3.05),calc(100svh - 405px)),445px);letter-spacing:-.03em;line-height:.98;font-weight:600;color:var(--blue);white-space:nowrap;overflow:hidden}
+.hero-letter{display:inline-block;animation:letter-in 1.3s var(--ease) both;animation-delay:var(--delay);will-change:transform}
+.hero-enter{animation:hero-in .9s var(--ease) both;animation-delay:var(--delay)}
+.motion-toggle{display:flex;gap:7px;align-items:center;border:0;background:none;color:var(--muted);font-size:13px;padding:8px 0;cursor:pointer;min-height:44px}
+.motion-toggle:hover{color:var(--accent-text)}
+@keyframes hero-in{from{opacity:0;transform:translateY(25px)}to{opacity:1;transform:translateY(0)}}
+@keyframes letter-in{from{transform:translateY(108%) rotate(6deg)}to{transform:translateY(0) rotate(0)}}
+@media(prefers-reduced-motion:no-preference) and (min-height:600px){.hero-stage{height:240svh}.hero{position:sticky;top:0;height:100svh}.work-section{margin-top:-100svh}}
+@media(max-width:650px){.hero-note{display:none}.hero-name{font-size:min(calc((100vw - 40px) / 3.05),48svh)}.hero-bottom{display:block}.hero-bottom .button{margin-top:25px}.hero-intro{font-size:16px}.hero-top p{font-size:14px}}
+@media(prefers-reduced-motion:reduce){.hero-letter,.hero-enter{animation:none!important;opacity:1;transform:none}}
